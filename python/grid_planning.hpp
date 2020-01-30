@@ -7,9 +7,11 @@
 // #include <yaml-cpp/ya"asdml.h>
 
 #include "../include/libMultiRobotPlanning/cbs.hpp"
+#include "../include/libMultiRobotPlanning/ecbs.hpp"
 // #include "timer.hpp"
 
 using libMultiRobotPlanning::CBS;
+using libMultiRobotPlanning::ECBS;
 using libMultiRobotPlanning::Neighbor;
 using libMultiRobotPlanning::PlanResult;
 
@@ -456,7 +458,286 @@ class Environment {
   int m_lowLevelExpanded;
 };
 
-std::pair<bool, std::vector<std::vector<std::pair<int, int>>>> plan(const std::vector<std::vector<bool>>& obstacles,
+
+///
+class ECBSEnvironment {
+ public:
+  ECBSEnvironment(size_t dimx, size_t dimy, std::unordered_set<Location> obstacles,
+              std::vector<Location> goals)
+      : m_dimx(dimx),
+        m_dimy(dimy),
+        m_obstacles(std::move(obstacles)),
+        m_goals(std::move(goals)),
+        m_agentIdx(0),
+        m_constraints(nullptr),
+        m_lastGoalConstraint(-1),
+        m_highLevelExpanded(0),
+        m_lowLevelExpanded(0) {}
+
+  ECBSEnvironment(const ECBSEnvironment&) = delete;
+  ECBSEnvironment& operator=(const ECBSEnvironment&) = delete;
+
+  void setLowLevelContext(size_t agentIdx, const Constraints* constraints) {
+    assert(constraints);
+    m_agentIdx = agentIdx;
+    m_constraints = constraints;
+    m_lastGoalConstraint = -1;
+    for (const auto& vc : constraints->vertexConstraints) {
+      if (vc.x == m_goals[m_agentIdx].x && vc.y == m_goals[m_agentIdx].y) {
+        m_lastGoalConstraint = std::max(m_lastGoalConstraint, vc.time);
+      }
+    }
+  }
+
+  int admissibleHeuristic(const State& s) {
+    return std::abs(s.x - m_goals[m_agentIdx].x) +
+           std::abs(s.y - m_goals[m_agentIdx].y);
+  }
+
+  // low-level
+  int focalStateHeuristic(
+      const State& s, int /*gScore*/,
+      const std::vector<PlanResult<State, Action, int> >& solution) {
+    int numConflicts = 0;
+    for (size_t i = 0; i < solution.size(); ++i) {
+      if (i != m_agentIdx && !solution[i].states.empty()) {
+        State state2 = getState(i, solution, s.time);
+        if (s.equalExceptTime(state2)) {
+          ++numConflicts;
+        }
+      }
+    }
+    return numConflicts;
+  }
+
+  // low-level
+  int focalTransitionHeuristic(
+      const State& s1a, const State& s1b, int /*gScoreS1a*/, int /*gScoreS1b*/,
+      const std::vector<PlanResult<State, Action, int> >& solution) {
+    int numConflicts = 0;
+    for (size_t i = 0; i < solution.size(); ++i) {
+      if (i != m_agentIdx && !solution[i].states.empty()) {
+        State s2a = getState(i, solution, s1a.time);
+        State s2b = getState(i, solution, s1b.time);
+        if (s1a.equalExceptTime(s2b) && s1b.equalExceptTime(s2a)) {
+          ++numConflicts;
+        }
+      }
+    }
+    return numConflicts;
+  }
+
+  // Count all conflicts
+  int focalHeuristic(
+      const std::vector<PlanResult<State, Action, int> >& solution) {
+    int numConflicts = 0;
+
+    int max_t = 0;
+    for (const auto& sol : solution) {
+      max_t = std::max<int>(max_t, sol.states.size() - 1);
+    }
+
+    for (int t = 0; t < max_t; ++t) {
+      // check drive-drive vertex collisions
+      for (size_t i = 0; i < solution.size(); ++i) {
+        State state1 = getState(i, solution, t);
+        for (size_t j = i + 1; j < solution.size(); ++j) {
+          State state2 = getState(j, solution, t);
+          if (state1.equalExceptTime(state2)) {
+            ++numConflicts;
+          }
+        }
+      }
+      // drive-drive edge (swap)
+      for (size_t i = 0; i < solution.size(); ++i) {
+        State state1a = getState(i, solution, t);
+        State state1b = getState(i, solution, t + 1);
+        for (size_t j = i + 1; j < solution.size(); ++j) {
+          State state2a = getState(j, solution, t);
+          State state2b = getState(j, solution, t + 1);
+          if (state1a.equalExceptTime(state2b) &&
+              state1b.equalExceptTime(state2a)) {
+            ++numConflicts;
+          }
+        }
+      }
+    }
+    return numConflicts;
+  }
+
+  bool isSolution(const State& s) {
+    return s.x == m_goals[m_agentIdx].x && s.y == m_goals[m_agentIdx].y &&
+           s.time > m_lastGoalConstraint;
+  }
+
+  void getNeighbors(const State& s,
+                    std::vector<Neighbor<State, Action, int> >& neighbors) {
+    // std::cout << "#VC " << constraints.vertexConstraints.size() << std::endl;
+    // for(const auto& vc : constraints.vertexConstraints) {
+    //   std::cout << "  " << vc.time << "," << vc.x << "," << vc.y <<
+    //   std::endl;
+    // }
+    neighbors.clear();
+    {
+      State n(s.time + 1, s.x, s.y);
+      if (stateValid(n) && transitionValid(s, n)) {
+        neighbors.emplace_back(
+            Neighbor<State, Action, int>(n, Action::Wait, 1));
+      }
+    }
+    {
+      State n(s.time + 1, s.x - 1, s.y);
+      if (stateValid(n) && transitionValid(s, n)) {
+        neighbors.emplace_back(
+            Neighbor<State, Action, int>(n, Action::Left, 1));
+      }
+    }
+    {
+      State n(s.time + 1, s.x + 1, s.y);
+      if (stateValid(n) && transitionValid(s, n)) {
+        neighbors.emplace_back(
+            Neighbor<State, Action, int>(n, Action::Right, 1));
+      }
+    }
+    {
+      State n(s.time + 1, s.x, s.y + 1);
+      if (stateValid(n) && transitionValid(s, n)) {
+        neighbors.emplace_back(Neighbor<State, Action, int>(n, Action::Up, 1));
+      }
+    }
+    {
+      State n(s.time + 1, s.x, s.y - 1);
+      if (stateValid(n) && transitionValid(s, n)) {
+        neighbors.emplace_back(
+            Neighbor<State, Action, int>(n, Action::Down, 1));
+      }
+    }
+  }
+
+  bool getFirstConflict(
+      const std::vector<PlanResult<State, Action, int> >& solution,
+      Conflict& result) {
+    int max_t = 0;
+    for (const auto& sol : solution) {
+      max_t = std::max<int>(max_t, sol.states.size() - 1);
+    }
+
+    for (int t = 0; t < max_t; ++t) {
+      // check drive-drive vertex collisions
+      for (size_t i = 0; i < solution.size(); ++i) {
+        State state1 = getState(i, solution, t);
+        for (size_t j = i + 1; j < solution.size(); ++j) {
+          State state2 = getState(j, solution, t);
+          if (state1.equalExceptTime(state2)) {
+            result.time = t;
+            result.agent1 = i;
+            result.agent2 = j;
+            result.type = Conflict::Vertex;
+            result.x1 = state1.x;
+            result.y1 = state1.y;
+            // std::cout << "VC " << t << "," << state1.x << "," << state1.y <<
+            // std::endl;
+            return true;
+          }
+        }
+      }
+      // drive-drive edge (swap)
+      for (size_t i = 0; i < solution.size(); ++i) {
+        State state1a = getState(i, solution, t);
+        State state1b = getState(i, solution, t + 1);
+        for (size_t j = i + 1; j < solution.size(); ++j) {
+          State state2a = getState(j, solution, t);
+          State state2b = getState(j, solution, t + 1);
+          if (state1a.equalExceptTime(state2b) &&
+              state1b.equalExceptTime(state2a)) {
+            result.time = t;
+            result.agent1 = i;
+            result.agent2 = j;
+            result.type = Conflict::Edge;
+            result.x1 = state1a.x;
+            result.y1 = state1a.y;
+            result.x2 = state1b.x;
+            result.y2 = state1b.y;
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  void createConstraintsFromConflict(
+      const Conflict& conflict, std::map<size_t, Constraints>& constraints) {
+    if (conflict.type == Conflict::Vertex) {
+      Constraints c1;
+      c1.vertexConstraints.emplace(
+          VertexConstraint(conflict.time, conflict.x1, conflict.y1));
+      constraints[conflict.agent1] = c1;
+      constraints[conflict.agent2] = c1;
+    } else if (conflict.type == Conflict::Edge) {
+      Constraints c1;
+      c1.edgeConstraints.emplace(EdgeConstraint(
+          conflict.time, conflict.x1, conflict.y1, conflict.x2, conflict.y2));
+      constraints[conflict.agent1] = c1;
+      Constraints c2;
+      c2.edgeConstraints.emplace(EdgeConstraint(
+          conflict.time, conflict.x2, conflict.y2, conflict.x1, conflict.y1));
+      constraints[conflict.agent2] = c2;
+    }
+  }
+
+  void onExpandHighLevelNode(int /*cost*/) { m_highLevelExpanded++; }
+
+  void onExpandLowLevelNode(const State& /*s*/, int /*fScore*/,
+                            int /*gScore*/) {
+    m_lowLevelExpanded++;
+  }
+
+  int highLevelExpanded() { return m_highLevelExpanded; }
+
+  int lowLevelExpanded() const { return m_lowLevelExpanded; }
+
+ private:
+  State getState(size_t agentIdx,
+                 const std::vector<PlanResult<State, Action, int> >& solution,
+                 size_t t) {
+    assert(agentIdx < solution.size());
+    if (t < solution[agentIdx].states.size()) {
+      return solution[agentIdx].states[t].first;
+    }
+    assert(!solution[agentIdx].states.empty());
+    return solution[agentIdx].states.back().first;
+  }
+
+  bool stateValid(const State& s) {
+    assert(m_constraints);
+    const auto& con = m_constraints->vertexConstraints;
+    return s.x >= 0 && s.x < m_dimx && s.y >= 0 && s.y < m_dimy &&
+           m_obstacles.find(Location(s.x, s.y)) == m_obstacles.end() &&
+           con.find(VertexConstraint(s.time, s.x, s.y)) == con.end();
+  }
+
+  bool transitionValid(const State& s1, const State& s2) {
+    assert(m_constraints);
+    const auto& con = m_constraints->edgeConstraints;
+    return con.find(EdgeConstraint(s1.time, s1.x, s1.y, s2.x, s2.y)) ==
+           con.end();
+  }
+
+ private:
+  int m_dimx;
+  int m_dimy;
+  std::unordered_set<Location> m_obstacles;
+  std::vector<Location> m_goals;
+  size_t m_agentIdx;
+  const Constraints* m_constraints;
+  int m_lastGoalConstraint;
+  int m_highLevelExpanded;
+  int m_lowLevelExpanded;
+};
+
+std::pair<bool, std::vector<std::vector<std::pair<int, int>>>> cbs_plan(const std::vector<std::vector<bool>>& obstacles,
                                     const std::vector<std::pair<int, int>>& init_pos,
                                     const std::vector<std::pair<int, int>>& goals) {
 
@@ -503,4 +784,55 @@ std::pair<bool, std::vector<std::vector<std::pair<int, int>>>> plan(const std::v
     return std::make_pair(true, result);
     
 
+}
+
+
+
+std::pair<bool, std::vector<std::vector<std::pair<int ,int>>>> ecbs_plan(
+                                    const std::vector<std::vector<bool>>& obstacles,
+                                    const std::vector<std::pair<int, int>>& init_pos,
+                                    const std::vector<std::pair<int, int>>& goals,
+                                    float optimality_factor) {
+  int dimx = obstacles.size();
+  int dimy = obstacles[0].size();
+  std::vector<Location> goal_locations;
+  for(const auto& goal : goals) {
+    goal_locations.emplace_back(goal.first, goal.second);
+  }
+  std::unordered_set<Location> obstacle_locations;
+  for(int i = 0; i < dimx; i++)
+    for(int j = 0; j < dimy; j++)
+      if(obstacles[i][j]) 
+        obstacle_locations.emplace(i, j);
+    
+  std::vector<State> start_states;
+  for(const auto& pos : init_pos) {
+    start_states.emplace_back(0, pos.first, pos.second);
+  }
+
+  ECBSEnvironment env(dimx, dimy, obstacle_locations, goal_locations);
+  ECBS<State, Action, int, Conflict, Constraints, ECBSEnvironment> ecbs(env, optimality_factor);
+  std::vector<PlanResult<State, Action, int> > solution;
+
+
+  bool success = ecbs.search(start_states, solution);
+
+  if(!success) {
+      return std::make_pair(success, std::vector<std::vector<std::pair<int, int>>>());
+  }
+
+  int timesteps = -1;
+  for(const auto& agent: solution) {
+      timesteps = std::max(timesteps, (int)agent.states.size());
+  }
+  std::vector<std::vector<std::pair<int, int>>> result(timesteps);
+
+  for(int t = 0; t < timesteps; t++) {
+      for(int a = 0; a < init_pos.size(); a++) {
+          const State& s = solution[a].states[std::min((unsigned long)t, solution[a].states.size() - 1)].first;
+          result[t].emplace_back(s.x, s.y);
+      }
+  }
+
+  return std::make_pair(true, result);
 }

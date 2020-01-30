@@ -4,7 +4,7 @@
 {
     "distutils": {
         "depends": [
-            "cbs_grid_planning.hpp"
+            "grid_planning.hpp"
         ],
         "extra_compile_args": [
             "-std=c++11"
@@ -12,7 +12,7 @@
         "language": "c++",
         "name": "cpp_cbs",
         "sources": [
-            "cbs_grid_planning.pyx"
+            "grid_planning.pyx"
         ]
     },
     "module_name": "cpp_cbs"
@@ -632,7 +632,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "typeinfo"
 #include <vector>
 #include <utility>
-#include "cbs_grid_planning.hpp"
+#include "grid_planning.hpp"
 #ifdef _OPENMP
 #include <omp.h>
 #endif /* _OPENMP */
@@ -841,7 +841,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "cbs_grid_planning.pyx",
+  "grid_planning.pyx",
   "stringsource",
 };
 
@@ -1203,25 +1203,29 @@ static const char __pyx_k_range[] = "range";
 static const char __pyx_k_world[] = "world";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_cpp_cbs[] = "cpp_cbs";
+static const char __pyx_k_cbs_path[] = "cbs_path";
 static const char __pyx_k_init_pos[] = "init_pos";
 static const char __pyx_k_resource[] = "resource";
 static const char __pyx_k_RLIMIT_AS[] = "RLIMIT_AS";
-static const char __pyx_k_find_path[] = "find_path";
+static const char __pyx_k_ecbs_path[] = "ecbs_path";
 static const char __pyx_k_setrlimit[] = "setrlimit";
+static const char __pyx_k_grid_planning_pyx[] = "grid_planning.pyx";
+static const char __pyx_k_optimality_factor[] = "optimality_factor";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
-static const char __pyx_k_cbs_grid_planning_pyx[] = "cbs_grid_planning.pyx";
 static PyObject *__pyx_n_s_RLIMIT_AS;
-static PyObject *__pyx_kp_s_cbs_grid_planning_pyx;
+static PyObject *__pyx_n_s_cbs_path;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_cpp_cbs;
-static PyObject *__pyx_n_s_find_path;
+static PyObject *__pyx_n_s_ecbs_path;
 static PyObject *__pyx_n_s_goals;
+static PyObject *__pyx_kp_s_grid_planning_pyx;
 static PyObject *__pyx_n_s_i;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_init_pos;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_name;
 static PyObject *__pyx_n_s_obs;
+static PyObject *__pyx_n_s_optimality_factor;
 static PyObject *__pyx_n_s_range;
 static PyObject *__pyx_n_s_resource;
 static PyObject *__pyx_n_s_row;
@@ -1229,33 +1233,441 @@ static PyObject *__pyx_n_s_setrlimit;
 static PyObject *__pyx_n_s_temp;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_world;
-static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_world, PyObject *__pyx_v_init_pos, PyObject *__pyx_v_goals); /* proto */
+static PyObject *__pyx_pf_7cpp_cbs_ecbs_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_world, PyObject *__pyx_v_init_pos, PyObject *__pyx_v_goals, PyObject *__pyx_v_optimality_factor); /* proto */
+static PyObject *__pyx_pf_7cpp_cbs_2cbs_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_world, PyObject *__pyx_v_init_pos, PyObject *__pyx_v_goals); /* proto */
 static PyObject *__pyx_int_1;
 static PyObject *__pyx_int_8589934592;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
+static PyObject *__pyx_tuple__4;
 static PyObject *__pyx_codeobj__3;
+static PyObject *__pyx_codeobj__5;
 /* Late includes */
 
-/* "cbs_grid_planning.pyx":12
- *         const vector[pair[int, int]] &goals) except +
+/* "grid_planning.pyx":20
  * 
- * def find_path(world, init_pos, goals):             # <<<<<<<<<<<<<<
+ * 
+ * def ecbs_path(world, init_pos, goals, optimality_factor):             # <<<<<<<<<<<<<<
  *     """Finds a path invoking C++ implementation
  * 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_7cpp_cbs_1find_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static char __pyx_doc_7cpp_cbs_find_path[] = "Finds a path invoking C++ implementation\n\n    Uses recursive CBS to explore a 4 connected grid\n\n    world - matrix specifying obstacles, 1 for obstacle, 0 for free\n    init_pos  - [[x, y], ...] specifying start position for each robot\n    goals     - [[x, y], ...] specifying goal position for each robot\n\n    returns:\n    [[[x1, y1], ...], [[x2, y2], ...], ...] path in the joint\n    configuration space\n\n    raises:\n    NoSolutionError if problem has no solution\n    OutOfTimeError if the planner ran out of time\n    ";
-static PyMethodDef __pyx_mdef_7cpp_cbs_1find_path = {"find_path", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_7cpp_cbs_1find_path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7cpp_cbs_find_path};
-static PyObject *__pyx_pw_7cpp_cbs_1find_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_7cpp_cbs_1ecbs_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7cpp_cbs_ecbs_path[] = "Finds a path invoking C++ implementation\n\n    Uses recursive CBS to explore a 4 connected grid\n\n    world - matrix specifying obstacles, 1 for obstacle, 0 for free\n    init_pos  - [[x, y], ...] specifying start position for each robot\n    goals     - [[x, y], ...] specifying goal position for each robot\n\n    returns:\n    [[[x1, y1], ...], [[x2, y2], ...], ...] path in the joint\n    configuration space\n\n    raises:\n    NoSolutionError if problem has no solution\n    OutOfTimeError if the planner ran out of time\n    ";
+static PyMethodDef __pyx_mdef_7cpp_cbs_1ecbs_path = {"ecbs_path", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_7cpp_cbs_1ecbs_path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7cpp_cbs_ecbs_path};
+static PyObject *__pyx_pw_7cpp_cbs_1ecbs_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_world = 0;
+  PyObject *__pyx_v_init_pos = 0;
+  PyObject *__pyx_v_goals = 0;
+  PyObject *__pyx_v_optimality_factor = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("ecbs_path (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_world,&__pyx_n_s_init_pos,&__pyx_n_s_goals,&__pyx_n_s_optimality_factor,0};
+    PyObject* values[4] = {0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_world)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_init_pos)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("ecbs_path", 1, 4, 4, 1); __PYX_ERR(0, 20, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_goals)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("ecbs_path", 1, 4, 4, 2); __PYX_ERR(0, 20, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_optimality_factor)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("ecbs_path", 1, 4, 4, 3); __PYX_ERR(0, 20, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "ecbs_path") < 0)) __PYX_ERR(0, 20, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+    }
+    __pyx_v_world = values[0];
+    __pyx_v_init_pos = values[1];
+    __pyx_v_goals = values[2];
+    __pyx_v_optimality_factor = values[3];
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("ecbs_path", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 20, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("cpp_cbs.ecbs_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_7cpp_cbs_ecbs_path(__pyx_self, __pyx_v_world, __pyx_v_init_pos, __pyx_v_goals, __pyx_v_optimality_factor);
+
+  /* function exit code */
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_7cpp_cbs_ecbs_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_world, PyObject *__pyx_v_init_pos, PyObject *__pyx_v_goals, PyObject *__pyx_v_optimality_factor) {
+  PyObject *__pyx_v_resource = NULL;
+  std::vector<std::vector<bool> >  __pyx_v_obs;
+  std::vector<bool>  __pyx_v_temp;
+  PyObject *__pyx_v_row = NULL;
+  PyObject *__pyx_v_i = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  int __pyx_t_5;
+  PyObject *__pyx_t_6 = NULL;
+  Py_ssize_t __pyx_t_7;
+  PyObject *(*__pyx_t_8)(PyObject *);
+  std::vector<bool>  __pyx_t_9;
+  Py_ssize_t __pyx_t_10;
+  PyObject *(*__pyx_t_11)(PyObject *);
+  bool __pyx_t_12;
+  std::vector<std::pair<int,int> >  __pyx_t_13;
+  std::vector<std::pair<int,int> >  __pyx_t_14;
+  float __pyx_t_15;
+  std::pair<bool,std::vector<std::vector<std::pair<int,int> > > >  __pyx_t_16;
+  __Pyx_RefNannySetupContext("ecbs_path", 0);
+
+  /* "grid_planning.pyx":38
+ *     """
+ * 
+ *     import resource             # <<<<<<<<<<<<<<
+ *     resource.setrlimit(resource.RLIMIT_AS, (2**33,2**33)) # 8Gb
+ * 
+ */
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_resource, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 38, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_v_resource = __pyx_t_1;
+  __pyx_t_1 = 0;
+
+  /* "grid_planning.pyx":39
+ * 
+ *     import resource
+ *     resource.setrlimit(resource.RLIMIT_AS, (2**33,2**33)) # 8Gb             # <<<<<<<<<<<<<<
+ * 
+ *     # convert to boolean.  For some reason coercion doesn't seem to
+ */
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_resource, __pyx_n_s_setrlimit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_resource, __pyx_n_s_RLIMIT_AS); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 39, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __pyx_t_4 = NULL;
+  __pyx_t_5 = 0;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
+    if (likely(__pyx_t_4)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __pyx_t_5 = 1;
+    }
+  }
+  #if CYTHON_FAST_PYCALL
+  if (PyFunction_Check(__pyx_t_2)) {
+    PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_3, __pyx_tuple_};
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  } else
+  #endif
+  #if CYTHON_FAST_PYCCALL
+  if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
+    PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_3, __pyx_tuple_};
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
+    __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  } else
+  #endif
+  {
+    __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 39, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_6);
+    if (__pyx_t_4) {
+      __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
+    }
+    __Pyx_GIVEREF(__pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_6, 0+__pyx_t_5, __pyx_t_3);
+    __Pyx_INCREF(__pyx_tuple_);
+    __Pyx_GIVEREF(__pyx_tuple_);
+    PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_5, __pyx_tuple_);
+    __pyx_t_3 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 39, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+  }
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "grid_planning.pyx":45
+ *     cdef vector[vector[bool]] obs
+ *     cdef vector[bool] temp
+ *     for row in world:             # <<<<<<<<<<<<<<
+ *         temp = vector[bool]()
+ *         for i in row:
+ */
+  if (likely(PyList_CheckExact(__pyx_v_world)) || PyTuple_CheckExact(__pyx_v_world)) {
+    __pyx_t_1 = __pyx_v_world; __Pyx_INCREF(__pyx_t_1); __pyx_t_7 = 0;
+    __pyx_t_8 = NULL;
+  } else {
+    __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_world); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
+    __pyx_t_8 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 45, __pyx_L1_error)
+  }
+  for (;;) {
+    if (likely(!__pyx_t_8)) {
+      if (likely(PyList_CheckExact(__pyx_t_1))) {
+        if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_2); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 45, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      } else {
+        if (__pyx_t_7 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_2); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 45, __pyx_L1_error)
+        #else
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        #endif
+      }
+    } else {
+      __pyx_t_2 = __pyx_t_8(__pyx_t_1);
+      if (unlikely(!__pyx_t_2)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 45, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_2);
+    }
+    __Pyx_XDECREF_SET(__pyx_v_row, __pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "grid_planning.pyx":46
+ *     cdef vector[bool] temp
+ *     for row in world:
+ *         temp = vector[bool]()             # <<<<<<<<<<<<<<
+ *         for i in row:
+ *             temp.push_back(i == 1)
+ */
+    try {
+      __pyx_t_9 = std::vector<bool> ();
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 46, __pyx_L1_error)
+    }
+    __pyx_v_temp = __pyx_t_9;
+
+    /* "grid_planning.pyx":47
+ *     for row in world:
+ *         temp = vector[bool]()
+ *         for i in row:             # <<<<<<<<<<<<<<
+ *             temp.push_back(i == 1)
+ *         obs.push_back(temp)
+ */
+    if (likely(PyList_CheckExact(__pyx_v_row)) || PyTuple_CheckExact(__pyx_v_row)) {
+      __pyx_t_2 = __pyx_v_row; __Pyx_INCREF(__pyx_t_2); __pyx_t_10 = 0;
+      __pyx_t_11 = NULL;
+    } else {
+      __pyx_t_10 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_row); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 47, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_11 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 47, __pyx_L1_error)
+    }
+    for (;;) {
+      if (likely(!__pyx_t_11)) {
+        if (likely(PyList_CheckExact(__pyx_t_2))) {
+          if (__pyx_t_10 >= PyList_GET_SIZE(__pyx_t_2)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_6 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_10); __Pyx_INCREF(__pyx_t_6); __pyx_t_10++; if (unlikely(0 < 0)) __PYX_ERR(0, 47, __pyx_L1_error)
+          #else
+          __pyx_t_6 = PySequence_ITEM(__pyx_t_2, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 47, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          #endif
+        } else {
+          if (__pyx_t_10 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_6 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_10); __Pyx_INCREF(__pyx_t_6); __pyx_t_10++; if (unlikely(0 < 0)) __PYX_ERR(0, 47, __pyx_L1_error)
+          #else
+          __pyx_t_6 = PySequence_ITEM(__pyx_t_2, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 47, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_6);
+          #endif
+        }
+      } else {
+        __pyx_t_6 = __pyx_t_11(__pyx_t_2);
+        if (unlikely(!__pyx_t_6)) {
+          PyObject* exc_type = PyErr_Occurred();
+          if (exc_type) {
+            if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+            else __PYX_ERR(0, 47, __pyx_L1_error)
+          }
+          break;
+        }
+        __Pyx_GOTREF(__pyx_t_6);
+      }
+      __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_6);
+      __pyx_t_6 = 0;
+
+      /* "grid_planning.pyx":48
+ *         temp = vector[bool]()
+ *         for i in row:
+ *             temp.push_back(i == 1)             # <<<<<<<<<<<<<<
+ *         obs.push_back(temp)
+ *     return ecbs_plan(obs, init_pos, goals, optimality_factor)
+ */
+      __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_v_i, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 48, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_12 == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 48, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      try {
+        __pyx_v_temp.push_back(__pyx_t_12);
+      } catch(...) {
+        __Pyx_CppExn2PyErr();
+        __PYX_ERR(0, 48, __pyx_L1_error)
+      }
+
+      /* "grid_planning.pyx":47
+ *     for row in world:
+ *         temp = vector[bool]()
+ *         for i in row:             # <<<<<<<<<<<<<<
+ *             temp.push_back(i == 1)
+ *         obs.push_back(temp)
+ */
+    }
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+    /* "grid_planning.pyx":49
+ *         for i in row:
+ *             temp.push_back(i == 1)
+ *         obs.push_back(temp)             # <<<<<<<<<<<<<<
+ *     return ecbs_plan(obs, init_pos, goals, optimality_factor)
+ * 
+ */
+    try {
+      __pyx_v_obs.push_back(__pyx_v_temp);
+    } catch(...) {
+      __Pyx_CppExn2PyErr();
+      __PYX_ERR(0, 49, __pyx_L1_error)
+    }
+
+    /* "grid_planning.pyx":45
+ *     cdef vector[vector[bool]] obs
+ *     cdef vector[bool] temp
+ *     for row in world:             # <<<<<<<<<<<<<<
+ *         temp = vector[bool]()
+ *         for i in row:
+ */
+  }
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "grid_planning.pyx":50
+ *             temp.push_back(i == 1)
+ *         obs.push_back(temp)
+ *     return ecbs_plan(obs, init_pos, goals, optimality_factor)             # <<<<<<<<<<<<<<
+ * 
+ * 
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_13 = __pyx_convert_vector_from_py_std_3a__3a_pair_3c_int_2c_int_3e___(__pyx_v_init_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_t_14 = __pyx_convert_vector_from_py_std_3a__3a_pair_3c_int_2c_int_3e___(__pyx_v_goals); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L1_error)
+  __pyx_t_15 = __pyx_PyFloat_AsFloat(__pyx_v_optimality_factor); if (unlikely((__pyx_t_15 == (float)-1) && PyErr_Occurred())) __PYX_ERR(0, 50, __pyx_L1_error)
+  try {
+    __pyx_t_16 = ecbs_plan(__pyx_v_obs, __pyx_t_13, __pyx_t_14, __pyx_t_15);
+  } catch(...) {
+    __Pyx_CppExn2PyErr();
+    __PYX_ERR(0, 50, __pyx_L1_error)
+  }
+  __pyx_t_1 = __pyx_convert_pair_to_py_bool____std_3a__3a_vector_3c_std_3a__3a_vector_3c_std_3a__3a_pair_3c_int_2c_int_3e____3e____3e___(__pyx_t_16); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 50, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "grid_planning.pyx":20
+ * 
+ * 
+ * def ecbs_path(world, init_pos, goals, optimality_factor):             # <<<<<<<<<<<<<<
+ *     """Finds a path invoking C++ implementation
+ * 
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_6);
+  __Pyx_AddTraceback("cpp_cbs.ecbs_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_resource);
+  __Pyx_XDECREF(__pyx_v_row);
+  __Pyx_XDECREF(__pyx_v_i);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "grid_planning.pyx":53
+ * 
+ * 
+ * def cbs_path(world, init_pos, goals):             # <<<<<<<<<<<<<<
+ *     """Finds a path invoking C++ implementation
+ * 
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_7cpp_cbs_3cbs_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static char __pyx_doc_7cpp_cbs_2cbs_path[] = "Finds a path invoking C++ implementation\n\n    Uses recursive CBS to explore a 4 connected grid\n\n    world - matrix specifying obstacles, 1 for obstacle, 0 for free\n    init_pos  - [[x, y], ...] specifying start position for each robot\n    goals     - [[x, y], ...] specifying goal position for each robot\n\n    returns:\n    [[[x1, y1], ...], [[x2, y2], ...], ...] path in the joint\n    configuration space\n\n    raises:\n    NoSolutionError if problem has no solution\n    OutOfTimeError if the planner ran out of time\n    ";
+static PyMethodDef __pyx_mdef_7cpp_cbs_3cbs_path = {"cbs_path", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_7cpp_cbs_3cbs_path, METH_VARARGS|METH_KEYWORDS, __pyx_doc_7cpp_cbs_2cbs_path};
+static PyObject *__pyx_pw_7cpp_cbs_3cbs_path(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_world = 0;
   PyObject *__pyx_v_init_pos = 0;
   PyObject *__pyx_v_goals = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("find_path (wrapper)", 0);
+  __Pyx_RefNannySetupContext("cbs_path (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_world,&__pyx_n_s_init_pos,&__pyx_n_s_goals,0};
     PyObject* values[3] = {0,0,0};
@@ -1281,17 +1693,17 @@ static PyObject *__pyx_pw_7cpp_cbs_1find_path(PyObject *__pyx_self, PyObject *__
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_init_pos)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("find_path", 1, 3, 3, 1); __PYX_ERR(0, 12, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("cbs_path", 1, 3, 3, 1); __PYX_ERR(0, 53, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_goals)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("find_path", 1, 3, 3, 2); __PYX_ERR(0, 12, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("cbs_path", 1, 3, 3, 2); __PYX_ERR(0, 53, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "find_path") < 0)) __PYX_ERR(0, 12, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "cbs_path") < 0)) __PYX_ERR(0, 53, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -1306,20 +1718,20 @@ static PyObject *__pyx_pw_7cpp_cbs_1find_path(PyObject *__pyx_self, PyObject *__
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("find_path", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 12, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("cbs_path", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 53, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("cpp_cbs.find_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("cpp_cbs.cbs_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7cpp_cbs_find_path(__pyx_self, __pyx_v_world, __pyx_v_init_pos, __pyx_v_goals);
+  __pyx_r = __pyx_pf_7cpp_cbs_2cbs_path(__pyx_self, __pyx_v_world, __pyx_v_init_pos, __pyx_v_goals);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_world, PyObject *__pyx_v_init_pos, PyObject *__pyx_v_goals) {
+static PyObject *__pyx_pf_7cpp_cbs_2cbs_path(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_world, PyObject *__pyx_v_init_pos, PyObject *__pyx_v_goals) {
   PyObject *__pyx_v_resource = NULL;
   std::vector<std::vector<bool> >  __pyx_v_obs;
   std::vector<bool>  __pyx_v_temp;
@@ -1342,30 +1754,30 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
   std::vector<std::pair<int,int> >  __pyx_t_13;
   std::vector<std::pair<int,int> >  __pyx_t_14;
   std::pair<bool,std::vector<std::vector<std::pair<int,int> > > >  __pyx_t_15;
-  __Pyx_RefNannySetupContext("find_path", 0);
+  __Pyx_RefNannySetupContext("cbs_path", 0);
 
-  /* "cbs_grid_planning.pyx":30
+  /* "grid_planning.pyx":71
  *     """
  * 
  *     import resource             # <<<<<<<<<<<<<<
  *     resource.setrlimit(resource.RLIMIT_AS, (2**33,2**33)) # 8Gb
  * 
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_resource, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_resource, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_resource = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "cbs_grid_planning.pyx":31
+  /* "grid_planning.pyx":72
  * 
  *     import resource
  *     resource.setrlimit(resource.RLIMIT_AS, (2**33,2**33)) # 8Gb             # <<<<<<<<<<<<<<
  * 
  *     # convert to boolean.  For some reason coercion doesn't seem to
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_resource, __pyx_n_s_setrlimit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_resource, __pyx_n_s_setrlimit); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_resource, __pyx_n_s_RLIMIT_AS); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_resource, __pyx_n_s_RLIMIT_AS); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_4 = NULL;
   __pyx_t_5 = 0;
@@ -1382,7 +1794,7 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_3, __pyx_tuple_};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
@@ -1391,14 +1803,14 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_2)) {
     PyObject *__pyx_temp[3] = {__pyx_t_4, __pyx_t_3, __pyx_tuple_};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_2, __pyx_temp+1-__pyx_t_5, 2+__pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   } else
   #endif
   {
-    __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 31, __pyx_L1_error)
+    __pyx_t_6 = PyTuple_New(2+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
     if (__pyx_t_4) {
       __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
@@ -1409,14 +1821,14 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_GIVEREF(__pyx_tuple_);
     PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_5, __pyx_tuple_);
     __pyx_t_3 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
   }
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cbs_grid_planning.pyx":37
+  /* "grid_planning.pyx":78
  *     cdef vector[vector[bool]] obs
  *     cdef vector[bool] temp
  *     for row in world:             # <<<<<<<<<<<<<<
@@ -1427,26 +1839,26 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
     __pyx_t_1 = __pyx_v_world; __Pyx_INCREF(__pyx_t_1); __pyx_t_7 = 0;
     __pyx_t_8 = NULL;
   } else {
-    __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_world); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 37, __pyx_L1_error)
+    __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_world); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 37, __pyx_L1_error)
+    __pyx_t_8 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 78, __pyx_L1_error)
   }
   for (;;) {
     if (likely(!__pyx_t_8)) {
       if (likely(PyList_CheckExact(__pyx_t_1))) {
         if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_2); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 37, __pyx_L1_error)
+        __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_2); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 78, __pyx_L1_error)
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 37, __pyx_L1_error)
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
       } else {
         if (__pyx_t_7 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_2); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 37, __pyx_L1_error)
+        __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_2); __pyx_t_7++; if (unlikely(0 < 0)) __PYX_ERR(0, 78, __pyx_L1_error)
         #else
-        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 37, __pyx_L1_error)
+        __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         #endif
       }
@@ -1456,7 +1868,7 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 37, __pyx_L1_error)
+          else __PYX_ERR(0, 78, __pyx_L1_error)
         }
         break;
       }
@@ -1465,7 +1877,7 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
     __Pyx_XDECREF_SET(__pyx_v_row, __pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "cbs_grid_planning.pyx":38
+    /* "grid_planning.pyx":79
  *     cdef vector[bool] temp
  *     for row in world:
  *         temp = vector[bool]()             # <<<<<<<<<<<<<<
@@ -1476,11 +1888,11 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
       __pyx_t_9 = std::vector<bool> ();
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 38, __pyx_L1_error)
+      __PYX_ERR(0, 79, __pyx_L1_error)
     }
     __pyx_v_temp = __pyx_t_9;
 
-    /* "cbs_grid_planning.pyx":39
+    /* "grid_planning.pyx":80
  *     for row in world:
  *         temp = vector[bool]()
  *         for i in row:             # <<<<<<<<<<<<<<
@@ -1491,26 +1903,26 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
       __pyx_t_2 = __pyx_v_row; __Pyx_INCREF(__pyx_t_2); __pyx_t_10 = 0;
       __pyx_t_11 = NULL;
     } else {
-      __pyx_t_10 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_row); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 39, __pyx_L1_error)
+      __pyx_t_10 = -1; __pyx_t_2 = PyObject_GetIter(__pyx_v_row); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 80, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_11 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 39, __pyx_L1_error)
+      __pyx_t_11 = Py_TYPE(__pyx_t_2)->tp_iternext; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 80, __pyx_L1_error)
     }
     for (;;) {
       if (likely(!__pyx_t_11)) {
         if (likely(PyList_CheckExact(__pyx_t_2))) {
           if (__pyx_t_10 >= PyList_GET_SIZE(__pyx_t_2)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_6 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_10); __Pyx_INCREF(__pyx_t_6); __pyx_t_10++; if (unlikely(0 < 0)) __PYX_ERR(0, 39, __pyx_L1_error)
+          __pyx_t_6 = PyList_GET_ITEM(__pyx_t_2, __pyx_t_10); __Pyx_INCREF(__pyx_t_6); __pyx_t_10++; if (unlikely(0 < 0)) __PYX_ERR(0, 80, __pyx_L1_error)
           #else
-          __pyx_t_6 = PySequence_ITEM(__pyx_t_2, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 39, __pyx_L1_error)
+          __pyx_t_6 = PySequence_ITEM(__pyx_t_2, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 80, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
           #endif
         } else {
           if (__pyx_t_10 >= PyTuple_GET_SIZE(__pyx_t_2)) break;
           #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-          __pyx_t_6 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_10); __Pyx_INCREF(__pyx_t_6); __pyx_t_10++; if (unlikely(0 < 0)) __PYX_ERR(0, 39, __pyx_L1_error)
+          __pyx_t_6 = PyTuple_GET_ITEM(__pyx_t_2, __pyx_t_10); __Pyx_INCREF(__pyx_t_6); __pyx_t_10++; if (unlikely(0 < 0)) __PYX_ERR(0, 80, __pyx_L1_error)
           #else
-          __pyx_t_6 = PySequence_ITEM(__pyx_t_2, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 39, __pyx_L1_error)
+          __pyx_t_6 = PySequence_ITEM(__pyx_t_2, __pyx_t_10); __pyx_t_10++; if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 80, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_6);
           #endif
         }
@@ -1520,7 +1932,7 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else __PYX_ERR(0, 39, __pyx_L1_error)
+            else __PYX_ERR(0, 80, __pyx_L1_error)
           }
           break;
         }
@@ -1529,25 +1941,25 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
       __Pyx_XDECREF_SET(__pyx_v_i, __pyx_t_6);
       __pyx_t_6 = 0;
 
-      /* "cbs_grid_planning.pyx":40
+      /* "grid_planning.pyx":81
  *         temp = vector[bool]()
  *         for i in row:
  *             temp.push_back(i == 1)             # <<<<<<<<<<<<<<
  *         obs.push_back(temp)
- *     return plan(obs, init_pos, goals)
+ *     return cbs_plan(obs, init_pos, goals)
  */
-      __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_v_i, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 40, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyInt_EqObjC(__pyx_v_i, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 81, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_12 == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 40, __pyx_L1_error)
+      __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_6); if (unlikely((__pyx_t_12 == ((bool)-1)) && PyErr_Occurred())) __PYX_ERR(0, 81, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       try {
         __pyx_v_temp.push_back(__pyx_t_12);
       } catch(...) {
         __Pyx_CppExn2PyErr();
-        __PYX_ERR(0, 40, __pyx_L1_error)
+        __PYX_ERR(0, 81, __pyx_L1_error)
       }
 
-      /* "cbs_grid_planning.pyx":39
+      /* "grid_planning.pyx":80
  *     for row in world:
  *         temp = vector[bool]()
  *         for i in row:             # <<<<<<<<<<<<<<
@@ -1557,20 +1969,20 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
     }
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "cbs_grid_planning.pyx":41
+    /* "grid_planning.pyx":82
  *         for i in row:
  *             temp.push_back(i == 1)
  *         obs.push_back(temp)             # <<<<<<<<<<<<<<
- *     return plan(obs, init_pos, goals)
+ *     return cbs_plan(obs, init_pos, goals)
  */
     try {
       __pyx_v_obs.push_back(__pyx_v_temp);
     } catch(...) {
       __Pyx_CppExn2PyErr();
-      __PYX_ERR(0, 41, __pyx_L1_error)
+      __PYX_ERR(0, 82, __pyx_L1_error)
     }
 
-    /* "cbs_grid_planning.pyx":37
+    /* "grid_planning.pyx":78
  *     cdef vector[vector[bool]] obs
  *     cdef vector[bool] temp
  *     for row in world:             # <<<<<<<<<<<<<<
@@ -1580,30 +1992,30 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cbs_grid_planning.pyx":42
+  /* "grid_planning.pyx":83
  *             temp.push_back(i == 1)
  *         obs.push_back(temp)
- *     return plan(obs, init_pos, goals)             # <<<<<<<<<<<<<<
+ *     return cbs_plan(obs, init_pos, goals)             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_13 = __pyx_convert_vector_from_py_std_3a__3a_pair_3c_int_2c_int_3e___(__pyx_v_init_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 42, __pyx_L1_error)
-  __pyx_t_14 = __pyx_convert_vector_from_py_std_3a__3a_pair_3c_int_2c_int_3e___(__pyx_v_goals); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 42, __pyx_L1_error)
+  __pyx_t_13 = __pyx_convert_vector_from_py_std_3a__3a_pair_3c_int_2c_int_3e___(__pyx_v_init_pos); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 83, __pyx_L1_error)
+  __pyx_t_14 = __pyx_convert_vector_from_py_std_3a__3a_pair_3c_int_2c_int_3e___(__pyx_v_goals); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 83, __pyx_L1_error)
   try {
-    __pyx_t_15 = plan(__pyx_v_obs, __pyx_t_13, __pyx_t_14);
+    __pyx_t_15 = cbs_plan(__pyx_v_obs, __pyx_t_13, __pyx_t_14);
   } catch(...) {
     __Pyx_CppExn2PyErr();
-    __PYX_ERR(0, 42, __pyx_L1_error)
+    __PYX_ERR(0, 83, __pyx_L1_error)
   }
-  __pyx_t_1 = __pyx_convert_pair_to_py_bool____std_3a__3a_vector_3c_std_3a__3a_vector_3c_std_3a__3a_pair_3c_int_2c_int_3e____3e____3e___(__pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 42, __pyx_L1_error)
+  __pyx_t_1 = __pyx_convert_pair_to_py_bool____std_3a__3a_vector_3c_std_3a__3a_vector_3c_std_3a__3a_pair_3c_int_2c_int_3e____3e____3e___(__pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 83, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "cbs_grid_planning.pyx":12
- *         const vector[pair[int, int]] &goals) except +
+  /* "grid_planning.pyx":53
  * 
- * def find_path(world, init_pos, goals):             # <<<<<<<<<<<<<<
+ * 
+ * def cbs_path(world, init_pos, goals):             # <<<<<<<<<<<<<<
  *     """Finds a path invoking C++ implementation
  * 
  */
@@ -1615,7 +2027,7 @@ static PyObject *__pyx_pf_7cpp_cbs_find_path(CYTHON_UNUSED PyObject *__pyx_self,
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_AddTraceback("cpp_cbs.find_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("cpp_cbs.cbs_path", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_resource);
@@ -2141,17 +2553,19 @@ static struct PyModuleDef __pyx_moduledef = {
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_RLIMIT_AS, __pyx_k_RLIMIT_AS, sizeof(__pyx_k_RLIMIT_AS), 0, 0, 1, 1},
-  {&__pyx_kp_s_cbs_grid_planning_pyx, __pyx_k_cbs_grid_planning_pyx, sizeof(__pyx_k_cbs_grid_planning_pyx), 0, 0, 1, 0},
+  {&__pyx_n_s_cbs_path, __pyx_k_cbs_path, sizeof(__pyx_k_cbs_path), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_cpp_cbs, __pyx_k_cpp_cbs, sizeof(__pyx_k_cpp_cbs), 0, 0, 1, 1},
-  {&__pyx_n_s_find_path, __pyx_k_find_path, sizeof(__pyx_k_find_path), 0, 0, 1, 1},
+  {&__pyx_n_s_ecbs_path, __pyx_k_ecbs_path, sizeof(__pyx_k_ecbs_path), 0, 0, 1, 1},
   {&__pyx_n_s_goals, __pyx_k_goals, sizeof(__pyx_k_goals), 0, 0, 1, 1},
+  {&__pyx_kp_s_grid_planning_pyx, __pyx_k_grid_planning_pyx, sizeof(__pyx_k_grid_planning_pyx), 0, 0, 1, 0},
   {&__pyx_n_s_i, __pyx_k_i, sizeof(__pyx_k_i), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_init_pos, __pyx_k_init_pos, sizeof(__pyx_k_init_pos), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_name, __pyx_k_name, sizeof(__pyx_k_name), 0, 0, 1, 1},
   {&__pyx_n_s_obs, __pyx_k_obs, sizeof(__pyx_k_obs), 0, 0, 1, 1},
+  {&__pyx_n_s_optimality_factor, __pyx_k_optimality_factor, sizeof(__pyx_k_optimality_factor), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
   {&__pyx_n_s_resource, __pyx_k_resource, sizeof(__pyx_k_resource), 0, 0, 1, 1},
   {&__pyx_n_s_row, __pyx_k_row, sizeof(__pyx_k_row), 0, 0, 1, 1},
@@ -2172,28 +2586,40 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "cbs_grid_planning.pyx":31
+  /* "grid_planning.pyx":39
  * 
  *     import resource
  *     resource.setrlimit(resource.RLIMIT_AS, (2**33,2**33)) # 8Gb             # <<<<<<<<<<<<<<
  * 
  *     # convert to boolean.  For some reason coercion doesn't seem to
  */
-  __pyx_tuple_ = PyTuple_Pack(2, __pyx_int_8589934592, __pyx_int_8589934592); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(2, __pyx_int_8589934592, __pyx_int_8589934592); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 39, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "cbs_grid_planning.pyx":12
- *         const vector[pair[int, int]] &goals) except +
+  /* "grid_planning.pyx":20
  * 
- * def find_path(world, init_pos, goals):             # <<<<<<<<<<<<<<
+ * 
+ * def ecbs_path(world, init_pos, goals, optimality_factor):             # <<<<<<<<<<<<<<
  *     """Finds a path invoking C++ implementation
  * 
  */
-  __pyx_tuple__2 = PyTuple_Pack(8, __pyx_n_s_world, __pyx_n_s_init_pos, __pyx_n_s_goals, __pyx_n_s_resource, __pyx_n_s_obs, __pyx_n_s_temp, __pyx_n_s_row, __pyx_n_s_i); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_tuple__2 = PyTuple_Pack(9, __pyx_n_s_world, __pyx_n_s_init_pos, __pyx_n_s_goals, __pyx_n_s_optimality_factor, __pyx_n_s_resource, __pyx_n_s_obs, __pyx_n_s_temp, __pyx_n_s_row, __pyx_n_s_i); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
-  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(3, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_cbs_grid_planning_pyx, __pyx_n_s_find_path, 12, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_codeobj__3 = (PyObject*)__Pyx_PyCode_New(4, 0, 9, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__2, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_grid_planning_pyx, __pyx_n_s_ecbs_path, 20, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__3)) __PYX_ERR(0, 20, __pyx_L1_error)
+
+  /* "grid_planning.pyx":53
+ * 
+ * 
+ * def cbs_path(world, init_pos, goals):             # <<<<<<<<<<<<<<
+ *     """Finds a path invoking C++ implementation
+ * 
+ */
+  __pyx_tuple__4 = PyTuple_Pack(8, __pyx_n_s_world, __pyx_n_s_init_pos, __pyx_n_s_goals, __pyx_n_s_resource, __pyx_n_s_obs, __pyx_n_s_temp, __pyx_n_s_row, __pyx_n_s_i); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__4);
+  __Pyx_GIVEREF(__pyx_tuple__4);
+  __pyx_codeobj__5 = (PyObject*)__Pyx_PyCode_New(3, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__4, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_grid_planning_pyx, __pyx_n_s_cbs_path, 53, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__5)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -2471,19 +2897,31 @@ if (!__Pyx_RefNanny) {
   if (__Pyx_patch_abc() < 0) __PYX_ERR(0, 1, __pyx_L1_error)
   #endif
 
-  /* "cbs_grid_planning.pyx":12
- *         const vector[pair[int, int]] &goals) except +
+  /* "grid_planning.pyx":20
  * 
- * def find_path(world, init_pos, goals):             # <<<<<<<<<<<<<<
+ * 
+ * def ecbs_path(world, init_pos, goals, optimality_factor):             # <<<<<<<<<<<<<<
  *     """Finds a path invoking C++ implementation
  * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7cpp_cbs_1find_path, NULL, __pyx_n_s_cpp_cbs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 12, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7cpp_cbs_1ecbs_path, NULL, __pyx_n_s_cpp_cbs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_find_path, __pyx_t_1) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_ecbs_path, __pyx_t_1) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "cbs_grid_planning.pyx":1
+  /* "grid_planning.pyx":53
+ * 
+ * 
+ * def cbs_path(world, init_pos, goals):             # <<<<<<<<<<<<<<
+ *     """Finds a path invoking C++ implementation
+ * 
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_7cpp_cbs_3cbs_path, NULL, __pyx_n_s_cpp_cbs); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_cbs_path, __pyx_t_1) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "grid_planning.pyx":1
  * # distutils: language = c++             # <<<<<<<<<<<<<<
  * from libcpp cimport bool
  * from libcpp.vector cimport vector
